@@ -1,12 +1,16 @@
 import math
 
 def make_translate( x, y, z ):
-    pass
+    trans = new_matrix(4, 1)
+    trans[0][0] = x
+    trans[0][1] = y
+    trans[0][2] = z
+    trans[0][3] = 1
 
 def make_scale( x, y, z ):
     pass
 
-def make_rotX( theta ):    
+def make_rotX( theta ):
     pass
 
 def make_rotY( theta ):
@@ -35,7 +39,7 @@ def scalar_mult( matrix, s ):
     for r in range( len( matrix[0] ) ):
         for c in range( len(matrix) ):
             matrix[c][r]*= s
-            
+
 #m1 * m2 -> m2
 def matrix_mult( m1, m2 ):
 
@@ -43,7 +47,7 @@ def matrix_mult( m1, m2 ):
     for row in m2:
         #get a copy of the next point
         tmp = row[:]
-        
+
         for r in range(4):
             m2[point][r] = (m1[0][r] * tmp[0] +
                             m1[1][r] * tmp[1] +
