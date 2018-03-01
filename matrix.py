@@ -1,23 +1,46 @@
 import math
 
 def make_translate( x, y, z ):
-    trans = new_matrix(4, 1)
-    trans[0][0] = x
-    trans[0][1] = y
-    trans[0][2] = z
-    trans[0][3] = 1
+    final = new_matrix(4, 1)
+    final[0] = [x,y,z,1]
+    return final
 
 def make_scale( x, y, z ):
-    pass
+    final = new_matrix()
+    coeff = [x,y,z,1]
+    for i in range(4):
+        final[i][i] = coeff[i]
+    return final
 
 def make_rotX( theta ):
-    pass
+    final = new_matrix()
+    ident(final)
+    rads = radians(theta)
+    final[0][0] = cos(rads)
+    final[0][1] = sin(rads)
+    final[1][0] = -sin(rads)
+    final[1][1] = cos(rads)
+    return rads
 
 def make_rotY( theta ):
-    pass
+    final = new_matrix()
+    ident(final)
+    rads = radians(theta)
+    final[1][1] = cos(rads)
+    final[2][1] = -sin(rads)
+    final[1][2] = sin(rads)
+    final[2][2] = cos(rads)
+    return rads
 
 def make_rotZ( theta ):
-    pass
+    final = new_matrix()
+    ident(final)
+    rads = radians(theta)
+    final[0][0] = cos(rads)
+    final[2][0] = sin(rads)
+    final[0][2] = -sin(rads)
+    final[2][2] = cos(rads)
+    return rads
 
 def print_matrix( matrix ):
     s = ''
@@ -34,11 +57,6 @@ def ident( matrix ):
                 matrix[c][r] = 1
             else:
                 matrix[c][r] = 0
-
-def scalar_mult( matrix, s ):
-    for r in range( len( matrix[0] ) ):
-        for c in range( len(matrix) ):
-            matrix[c][r]*= s
 
 #m1 * m2 -> m2
 def matrix_mult( m1, m2 ):
