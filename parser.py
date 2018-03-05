@@ -1,7 +1,6 @@
 from display import *
 from matrix import *
 from draw import *
-import re
 
 """
 Goes through the file named filename and performs all of the actions listed in that file.
@@ -15,7 +14,6 @@ The file follows the following format:
 	 scale: create a scale matrix,
 	    then multiply the transform matrix by the scale matrix -
 	    takes 3 arguments (sx, sy, sz)
-    ident
 	 move: create a translation matrix,
 	    then multiply the transform matrix by the translation matrix -
 	    takes 3 arguments (tx, ty, tz)
@@ -34,54 +32,64 @@ The file follows the following format:
 See the file script for an example of the file format
 """
 def parse_file( fname, points, transform, screen, color ):
-    with open(fname) as fp:
-        for line in enumerate(fp):
-            if(line == "line"):
-                line = fp.readline()
-                temp = line.split()
-                add_edge(points, temp[0], temp[1], temp[2], temp[3], temp[4], temp[5])
+    f = open(fname, 'r')
+    book = f.read()
+    f.close()
 
-            elif(line == "ident"):
-                ident(transform)
+    linelist = book.split('\n')
+    i = 0
+    while i < len(linelist):
+        if(linelist[i] == "line"):
+            temp = linelist[i+1].split()
+            add_edge(points, int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]), int(temp[4]), int(temp[5]))
+            i += 1
 
-            elif(line == "scale"):
-                line = fp.readline()
-                myarray = line.split()
-                temp = make_scale(myarray[0], myarray[1], myarray[2])
-                transform = matrix_mult(transform, temp)
+        elif(linelist[i] == "ident"):
+            ident(transform)
 
-            elif(line == "move"):
-                line = fp.readline()
-                myarray = line.split()
-                temp = make_translate(myarray[0], myarray[1], myarray[2])
-                transform = matrix_mult(transform, temp)
+        elif(linelist[i] == "scale"):
+            myarray = linelist[i+1].split()
+            temp = make_scale(int(myarray[0]), int(myarray[1]), int(myarray[2]))
+            matrix_mult(temp, transform)
+            i += 1
 
-            elif(line == "rotate"):
-                line = fp.readline()
-                myarray = line.split()
-                if myarray[0] = "x":
-                    temp = make_rotX(myarray[1])
-                    transform = matrix_mult(transform, temp)
-                elif myarray[0] = "y":
-                    temp = make_rotX(myarray[1])
-                    transform = matrix_mult(transform, temp)
-                elif myarray[0] = "z":
-                    temp = make_rotX(myarray[1])
-                    transform = matrix_mult(transform, temp)
+        elif(linelist[i] == "move"):
+            myarray = linelist[i+1].split()
+            temp = make_translate(int(myarray[0]), int(myarray[1]), int(myarray[2]))
+            matrix_mult(temp, transform)
+            i += 1
 
-            elif(line == "apply"):
-                points = matrix_mult(transform, points)
+        elif(linelist[i] == "rotate"):
+            myarray = linelist[i+1].split()
+            if myarray[0] == "x":
+                temp = make_rotX(int(myarray[1]))
+            elif myarray[0] == "y":
+                temp = make_rotY(int(myarray[1]))
+            elif myarray[0] == "z":
+                temp = make_rotZ(int(myarray[1]))
+            matrix_mult(temp, transform)
+            i += 1
 
-            elif(line == "display"):
-                draw_lines(points, screen, color)
-                display(screen)
+        elif(linelist[i] == "apply"):
+            matrix_mult(transform, points)
 
-            elif(line == "save"):
-                save_extension(screen, 'img.png')
+        elif(linelist[i] == "display"):
+            clear_screen(screen)
+            for rows in range(len(points)):
+                for cols in range(len(points[rows])):
+                    points[rows][cols] = int(points[rows][cols])
+            draw_lines(points, screen, color)
+            display(screen)
 
-            elif(line == "quit"):
-                return
+        elif(linelist[i] == "save"):
+            nom = linelist[i+1]
+            save_extension(screen, nom)
+            i += 1
 
-            else:
-                print("line not recognized: ")
-                print line
+        elif(linelist[i] == "quit"):
+            return
+
+        else:
+            print("line not recognized: ")
+            print linelist[i]
+        i += 1
